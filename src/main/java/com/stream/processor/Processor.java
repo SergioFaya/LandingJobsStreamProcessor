@@ -21,7 +21,6 @@ class Processor {
 
     @Autowired
     public void process(final StreamsBuilder builder) {
-
         KStream<String, String> textLines = builder.stream("topic1", Consumed.with(Serdes.String(), Serdes.String()));
 
         textLines
