@@ -5,9 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 
 @SpringBootApplication
-public class StreamProcessorApplication {
+@EnableKafkaStreams
+public class LandingJobsStreamProcessor {
     public static void main(String[] args) {
-        SpringApplication.run(StreamProcessorApplication.class, args);
+        SpringApplication.run(LandingJobsStreamProcessor.class, args);
     }
 }
 

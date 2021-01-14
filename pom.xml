@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.stream.processor</groupId>
-	<artifactId>Stream-Processor</artifactId>
+	<artifactId>LandingJobsStreamProcessor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Stream-Processor</name>
 	<description>Demo project for Spring Boot</description>

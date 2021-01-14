@@ -29,7 +29,7 @@ services:
       KAFKA_CREATE_TOPICS: "topic1:1:1,topic2:1:1"
 
   processor:
-    image: processor/stream-processor
+    build: .
     container_name: default-processor
     restart: always
     depends_on:
