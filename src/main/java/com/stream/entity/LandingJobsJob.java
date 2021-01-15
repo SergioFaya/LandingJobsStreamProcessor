@@ -38,9 +38,9 @@ public class LandingJobsJob {
     @JsonProperty("country_name")
     private String countryName;
     @JsonProperty("salary_low")
-    private Object salaryLow;
+    private Double salaryLow;
     @JsonProperty("salary_high")
-    private Object salaryHigh;
+    private Double salaryHigh;
     private String perks;
     @JsonProperty("published_at")
     private String publishedAt;

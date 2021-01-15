@@ -1,5 +1,6 @@
 package com.stream.serdes;
 
+import com.stream.entity.JobOffer;
 import com.stream.entity.LandingJobsJob;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
@@ -11,23 +12,38 @@ import java.util.Map;
 
 public class SerdesFactory {
 
-    private SerdesFactory(){ }
+    public static final String JSON_POJO_CLASS = "JsonPOJOClass";
 
-    public final static Serde<LandingJobsJob> landingJobsJobSerde(){
-        Map<String, Object> serdeProps = new HashMap<>();
-
-        final Serializer<LandingJobsJob> pageViewSerializer = new JsonPOJOSerializer();
-        serdeProps.put("JsonPOJOClass", LandingJobsJob.class);
-        pageViewSerializer.configure(serdeProps, false);
-
-        final Deserializer<LandingJobsJob> pageViewDeserializer = new JsonPOJODeserializer();
-        serdeProps.put("JsonPOJOClass", LandingJobsJob.class);
-        pageViewDeserializer.configure(serdeProps, false);
-
-        final Serde<LandingJobsJob> landingJobsJobSerde = Serdes.serdeFrom(pageViewSerializer, pageViewDeserializer);
-        return landingJobsJobSerde;
+    private SerdesFactory() {
     }
 
+    public static Serde<LandingJobsJob> landingJobsJobSerdes() {
+        Map<String, Object> serdeProps = new HashMap<>();
+
+        final Serializer<LandingJobsJob> serializer = new JsonPOJOSerializer<>();
+        serdeProps.put(JSON_POJO_CLASS, LandingJobsJob.class);
+        serializer.configure(serdeProps, false);
+
+        final Deserializer<LandingJobsJob> deserializer = new JsonPOJODeserializer<>();
+        serdeProps.put(JSON_POJO_CLASS, LandingJobsJob.class);
+        deserializer.configure(serdeProps, false);
+
+        return Serdes.serdeFrom(serializer, deserializer);
+    }
+
+    public static Serde<JobOffer> jobOfferSerdes() {
+        Map<String, Object> serdeProps = new HashMap<>();
+
+        final Serializer<JobOffer> serializer = new JsonPOJOSerializer<>();
+        serdeProps.put(JSON_POJO_CLASS, JobOffer.class);
+        serializer.configure(serdeProps, false);
+
+        final Deserializer<JobOffer> deserializer = new JsonPOJODeserializer<>();
+        serdeProps.put(JSON_POJO_CLASS, JobOffer.class);
+        deserializer.configure(serdeProps, false);
+
+        return Serdes.serdeFrom(serializer, deserializer);
+    }
 
 
 }

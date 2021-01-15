@@ -10,6 +10,7 @@ import java.util.Map;
 /**
  * Reference to the class
  * https://github.com/apache/kafka/tree/1.0/streams/examples/src/main/java/org/apache/kafka/streams/examples/pageview
+ *
  * @param <T>
  */
 
@@ -32,6 +33,7 @@ public class JsonPOJOSerializer<T> implements Serializer<T> {
             return null;
 
         try {
+            // objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             return objectMapper.writeValueAsBytes(data);
         } catch (Exception e) {
             throw new SerializationException("Error serializing JSON message", e);
