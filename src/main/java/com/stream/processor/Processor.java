@@ -4,6 +4,7 @@ import com.stream.entity.LandingJobsJob;
 import com.stream.serdes.SerdesFactory;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Printed;
@@ -21,14 +22,17 @@ class Processor {
 
     @Autowired
     public void process(final StreamsBuilder builder) {
-        KStream<String, LandingJobsJob> textLines = builder.stream(topicIn, Consumed.with(Serdes.String(),
+
+
+        KStream<String, LandingJobsJob> stream = builder.stream(topicIn, Consumed.with(Serdes.String(),
                 SerdesFactory.landingJobsJobSerde()));
 
-        textLines
-                .mapValues(value -> value.getClass().toString())
+        stream
+                .mapValues(value ->
+                        value.toString())
                 .to(topicOut, Produced.with(Serdes.String(), Serdes.String()));
         // for logging
-        textLines.print(Printed.toSysOut());
+        stream.print(Printed.toSysOut());
 
     }
 }
