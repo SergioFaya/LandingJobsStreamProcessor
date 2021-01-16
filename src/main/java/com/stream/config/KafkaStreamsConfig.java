@@ -17,7 +17,7 @@ public class KafkaStreamsConfig {
 
     public static final String APP_ID = "myapp";
 
-    @Value("${#{environment.KAFKA_BROKER}:#{'localhost:9092'}}")
+    @Value("${KAFKA_BROKER:#{'localhost:9092'}}")
     private String broker;
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)

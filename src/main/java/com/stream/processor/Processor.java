@@ -20,20 +20,20 @@ import java.util.List;
 @Component
 class Processor {
 
-    @Value("${#{environment.PROCESSOR_TOPIC_IN}:topic1}")
-    private String TOPIC_IN;
+    @Value("${PROCESSOR_TOPIC_IN:topic1}")
+    private String topicIn;
 
-    @Value("${#{environment.PROCESSOR_TOPIC_OUT}:topic2}")
-    private String TOPIC_OUT;
+    @Value("${PROCESSOR_TOPIC_OUT:topic2}")
+    private String topicOut;
 
     @Autowired
     public void process(final StreamsBuilder builder) {
-        KStream<String, LandingJobsJob> stream = builder.stream(TOPIC_IN, Consumed.with(Serdes.String(),
+        KStream<String, LandingJobsJob> stream = builder.stream(topicIn, Consumed.with(Serdes.String(),
                 SerdesFactory.landingJobsJobSerdes()));
 
         stream
                 .mapValues(this::createJobOffer)
-                .to(TOPIC_OUT, Produced.with(Serdes.String(), SerdesFactory.jobOfferSerdes()));
+                .to(topicOut, Produced.with(Serdes.String(), SerdesFactory.jobOfferSerdes()));
 
         // logging
         stream.print(Printed.toSysOut());

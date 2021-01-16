@@ -98,11 +98,15 @@ The landing jobs job JSON object has the following fields:
 The request to get more jobs is: https://landing.jobs/api/v1/jobs
 
 ##### Build
+
 ```
+mvn package
 docker build -t processor/landing-jobs-processor .
 ```
 
 ##### Run
 ```
-docker run processor/stream-processor
+docker run processor/landing-jobs-processor
+    or
+docker-compose up 
 ```
