@@ -12,6 +12,7 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,10 +20,11 @@ import java.util.List;
 @Component
 class Processor {
 
-    // TODO: in the future deployment extract topics to env variable and get it through docker compose
+    @Value("${#{environment.PROCESSOR_TOPIC_IN}:topic1}")
+    private String TOPIC_IN;
 
-    private static final String TOPIC_IN = "topic1";
-    private static final String TOPIC_OUT = "topic2";
+    @Value("${#{environment.PROCESSOR_TOPIC_OUT}:topic2}")
+    private String TOPIC_OUT;
 
     @Autowired
     public void process(final StreamsBuilder builder) {
