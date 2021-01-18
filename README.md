@@ -101,12 +101,12 @@ The request to get more jobs is: https://landing.jobs/api/v1/jobs
 
 ```
 mvn package
-docker build -t processor/landing-jobs-processor .
+docker build -t sergiofaya/landing-jobs-processor .
 ```
 
 ##### Run
 ```
-docker run processor/landing-jobs-processor
+docker run sergiofaya/landing-jobs-processor
     or
 docker-compose up 
 ```
