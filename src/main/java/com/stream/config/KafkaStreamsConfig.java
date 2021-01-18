@@ -15,7 +15,9 @@ import java.util.Map;
 @Configuration
 public class KafkaStreamsConfig {
 
-    public static final String APP_ID = "myapp";
+    @Value("${APP_ID:landing-jobs-processor}")
+    private String appId;
+
 
     @Value("${KAFKA_BROKER:#{'localhost:9092'}}")
     private String broker;
@@ -24,7 +26,7 @@ public class KafkaStreamsConfig {
     public KafkaStreamsConfiguration kStreamsConfigs() {
         Map<String, Object> props = new HashMap<>();
 
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, appId);
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, broker);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().
 
