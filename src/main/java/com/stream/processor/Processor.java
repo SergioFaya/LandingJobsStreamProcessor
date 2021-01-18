@@ -43,7 +43,7 @@ class Processor {
         boolean hasSalary = landingJobsJob.getSalaryHigh() != null || landingJobsJob.getSalaryLow() != null;
         return JobOffer.builder()
                 .urlLink("")
-                .company(String.valueOf(landingJobsJob.getCompanyId()))
+                .company(landingJobsJob.getCompany())
                 .hasSalary(hasSalary)
                 .salary(createSalary(landingJobsJob, hasSalary))
                 .description(landingJobsJob.getRoleDescription())

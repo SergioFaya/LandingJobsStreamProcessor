@@ -12,8 +12,7 @@ public class LandingJobsJob {
     private int reward;
     @JsonProperty("work_from_home")
     private boolean workFromHome;
-    @JsonProperty("company_id")
-    private int companyId;
+    private String company;
     private String city;
     @JsonProperty("created_at")
     private String createdAt;
