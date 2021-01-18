@@ -40,3 +40,4 @@ services:
       KAFKA_BROKER: kafka:29092
       PROCESSOR_TOPIC_IN: landing-jobs-topic
       PROCESSOR_TOPIC_OUT: job-offer-topic
+      APP_ID: landing-jobs-processor
