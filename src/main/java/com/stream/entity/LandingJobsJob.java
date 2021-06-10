@@ -45,5 +45,8 @@ public class LandingJobsJob {
     private String publishedAt;
     @JsonProperty("relocation_paid")
     private boolean relocationPaid;
-
+    @JsonProperty("company_logo_url")
+    private String companyLogoUrl;
+    @JsonProperty("url")
+    private String url;
 }

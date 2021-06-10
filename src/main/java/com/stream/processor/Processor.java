@@ -6,53 +6,79 @@ import com.stream.entity.Location;
 import com.stream.entity.Salary;
 import com.stream.serdes.SerdesFactory;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Printed;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.common.utils.Bytes;
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.state.KeyValueStore;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 class Processor {
-
-    @Value("${PROCESSOR_TOPIC_IN:topic1}")
-    private String topicIn;
+    // https://abhishek1987.medium.com/kafka-streams-interactive-queries-9a05ff92d75a
 
     @Value("${PROCESSOR_TOPIC_OUT:topic2}")
     private String topicOut;
 
-    @Autowired
-    public void process(final StreamsBuilder builder) {
-        KStream<String, LandingJobsJob> stream = builder.stream(topicIn, Consumed.with(Serdes.String(),
-                SerdesFactory.landingJobsJobSerdes()));
+    @Value("${TAGS_KEYWORD}")
+    private List<String> tags;
 
-        stream
-                .mapValues(this::createJobOffer)
-                .to(topicOut, Produced.with(Serdes.String(), SerdesFactory.jobOfferSerdes()));
+    @Autowired
+    private KStream<String, LandingJobsJob> kafkaStream;
+
+    @Autowired
+    public void process() {
+        // kafka-console-producer.sh --broker-list localhost:9092 --topic topic-name --property "parse.key=true" --property "key.separator=:"
+        // KTable<Integer, JobOffer> table =
+        KStream<String, JobOffer> stream = kafkaStream
+                .map((key, job) -> keyMapper(job))
+                .mapValues(this::createJobOffer);
+
+        String table = "temp-filter-table";
+// table is used to avoid duplicated values
+        KTable<String, JobOffer> tempTable = stream.toTable(Named.as(table),
+                Materialized.<String, JobOffer, KeyValueStore<Bytes, byte[]>>as(
+                        table /* table/store name */)
+                        .withKeySerde(Serdes.String()) /* key serde */
+                        .withValueSerde(SerdesFactory.jobOfferSerdes()) /* value serde */
+        );
+
+        KStream<String, JobOffer> finalStream = tempTable.toStream(Named.as(topicOut));
 
         // logging
-        stream.print(Printed.toSysOut());
+        kafkaStream.print(Printed.toSysOut());
+        finalStream.print(Printed.toSysOut());
     }
+
+    private KeyValue<String, LandingJobsJob> keyMapper(LandingJobsJob job) {
+        return new KeyValue("JOB" + job.getId(), job);
+    }
+
 
     private JobOffer createJobOffer(LandingJobsJob landingJobsJob) {
         boolean hasSalary = landingJobsJob.getSalaryHigh() != null || landingJobsJob.getSalaryLow() != null;
         return JobOffer.builder()
-                .urlLink("")
+                .urlLink(landingJobsJob.getUrl())
                 .company(landingJobsJob.getCompany())
                 .hasSalary(hasSalary)
                 .salary(createSalary(landingJobsJob, hasSalary))
-                .description(landingJobsJob.getRoleDescription())
+                .description(cleanDescription(landingJobsJob.getRoleDescription()))
                 .title(landingJobsJob.getTitle())
                 .location(createLocation(landingJobsJob))
                 .publishedAt(landingJobsJob.getPublishedAt())
                 .remote(landingJobsJob.isRemote())
                 .tags(createTags(landingJobsJob))
+                .companyLogoUrl(landingJobsJob.getCompanyLogoUrl())
                 .build();
+    }
+
+    private String cleanDescription(String description) {
+        return Jsoup.parse(description).text();
     }
 
     private Location createLocation(LandingJobsJob landingJobsJob) {
@@ -74,7 +100,17 @@ class Processor {
     }
 
     private List<String> createTags(LandingJobsJob landingJobsJob) {
-        // TODO: create more tags reviewing the description of the job based on keywords
-        return landingJobsJob.getTags();
+        String description = landingJobsJob.getRoleDescription();
+        String upperDescription = description.toUpperCase();
+
+        // List<String> myTags = new ArrayList<>(landingJobsJob.getTags());
+        List<String> myTags = new ArrayList<>();
+
+        for (String tag : tags) {
+            if (upperDescription.contains(tag.toUpperCase())) {
+                myTags.add(tag);
+            }
+        }
+        return myTags;
     }
 }
