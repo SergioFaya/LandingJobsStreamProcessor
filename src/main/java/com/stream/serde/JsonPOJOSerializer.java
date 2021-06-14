@@ -1,4 +1,4 @@
-package com.stream.serdes;
+package com.stream.serde;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
