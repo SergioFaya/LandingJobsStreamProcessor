@@ -78,3 +78,6 @@ docker run sergiofaya/landing-jobs-processor
     or
 docker-compose up 
 ```
+Produce key value
+
+./kafka-console-producer.sh --topic landing-jobs-topic --bootstrap-server 172.17.0.1:9092 --property "parse.key=true" --property "key.separator=:"
