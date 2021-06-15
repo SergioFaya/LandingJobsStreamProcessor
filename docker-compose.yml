@@ -30,16 +30,17 @@ services:
 
 
   # KAFKA_BROKER=172.17.0.1:9092;PROCESSOR_TOPIC_IN=landing-jobs-topic;PROCESSOR_TOPIC_OUT=job-offer-topic;APP_ID=landing-jobs-processor
-  #processor:
-  #    image: sergiofaya/landing-jobs-processor
-  #    container_name: landing-jobs-processor
-  #    restart: always
-  #    depends_on:
-  #      - kafka
-  #    links:
-  #      - kafka:kafka
-  #    environment:
-  #      KAFKA_BROKER: kafka:29092
-  #      PROCESSOR_TOPIC_IN: landing-jobs-topic
-  #      PROCESSOR_TOPIC_OUT: job-offer-topic
-  #      APP_ID: landing-jobs-processor
+  processor:
+    image: sergiofaya/landing-jobs-processor
+    container_name: landing-jobs-processor
+    restart: always
+    depends_on:
+      - kafka
+    links:
+      - kafka:kafka
+    ports:
+      - 8081:8081
+    environment:
+      KAFKA_BROKER: kafka:29092
+      PROCESSOR_TOPIC_IN: landing-jobs-topic
+      APP_ID: landing-jobs-processor
