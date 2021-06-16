@@ -1,6 +1,7 @@
 package com.stream.api;
 
 
+import com.stream.config.CustomConfig;
 import com.stream.entity.JobOffer;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -19,15 +20,18 @@ import java.util.List;
 public class Controller {
 
     @Autowired
+    private CustomConfig customConfig;
+
+    @Autowired
     private InteractiveQueryService interactiveQueryService;
 
     @GetMapping("")
     public ResponseEntity<JobOffer> findAll() {
         final ReadOnlyKeyValueStore<String, JobOffer> songStore =
-                interactiveQueryService.getQueryableStore("JOBS_STORAGE2", QueryableStoreTypes.<String, JobOffer>keyValueStore());
+                interactiveQueryService.getQueryableStore(customConfig.tableName, QueryableStoreTypes.<String, JobOffer>keyValueStore());
         KeyValueIterator<String, JobOffer> offers = songStore.all();
         List<JobOffer> result = new ArrayList<>();
-        while (offers.hasNext() && result.size() < 10) {
+        while (offers.hasNext() && result.size() < customConfig.responseLimit) {
             result.add(offers.next().value);
         }
         return new ResponseEntity(result, HttpStatus.OK);
