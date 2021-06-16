@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Component
 class Processor {
@@ -86,12 +87,17 @@ class Processor {
         String description = landingJobsJob.getRoleDescription();
         String upperDescription = description.toUpperCase();
 
-        List<String> tags = customConfig.processorTags;
-
-        List<String> myTags = new ArrayList<>(landingJobsJob.getTags());
+        List<String> tags = customConfig.processorTags.stream().map(String::toUpperCase).collect(Collectors.toList());
+        List<String> myTags = new ArrayList<String>(
+                landingJobsJob
+                        .getTags()
+                        .stream()
+                        .map(String::toUpperCase)
+                        .collect(Collectors.toList())
+        );
 
         for (String tag : tags) {
-            if (upperDescription.contains(tag.toUpperCase())) {
+            if (upperDescription.contains(tag)) {
                 myTags.add(tag);
             }
         }
