@@ -98,7 +98,9 @@ class Processor {
 
         for (String tag : tags) {
             if (upperDescription.contains(tag)) {
-                myTags.add(tag);
+                if (!myTags.contains(tag)) {
+                    myTags.add(tag);
+                }
             }
         }
         return myTags;
